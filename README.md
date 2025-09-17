@@ -13,7 +13,25 @@
 Large Language Models (**LLMs**) perform well with small contexts, but when processing information from larger documents, they may begin to forget details or hallucinate (make things up). Additionally, they often answer based on their training knowledge, even when a specific context is provided. **RAG** (Retrieval-Augmented Generation) bypasses these two problems. First, RAG uses a **system prompt** to force the model to answer in a desired behavior (here, based ONLY on the provided documents). The prompt also tells the model to state when it lacks sufficient information to provide a proper answer.
 Note: While you can use a system prompt without RAG, you cannot effectively use RAG without a system prompt!
 
-RAG also involves **chunking** documents into smaller pieces. It then retrieves only the relevant parts that correspond to the user's question. This is done through semantic similarity comparison (a 'meaning' comparison, rather than regular word matching). This process significantly reduces the context size, which in turn helps to reduce hallucinations.
+RAG also involves **chunking** documents into smaller pieces. It then retrieves only the relevant parts that correspond to the user's question. This is done through semantic similarity comparison (a 'meaning' comparison, rather than regular word matching). This process significantly reduces the context size, which in turn helps to reduce hallucinations. Here is a visually appealing Mermaid diagram:
+```mermaid
+flowchart TD
+    A[📄 Documents] --> B[✂ Split into Chunks]
+    B --> C[🔢 Generate Embeddings]
+    C --> D[💾 Store in Vector Database]
+    
+    E[❓ User Query] --> F[🔢 Generate Query Embedding]
+    F --> G["🔍 Find Similar Chunks <br/> (Cosine Similarity)"]
+    G --> H["📋 Retrieve Chunks<br/>Above Minimum Threshold"]
+    
+    D -.- G
+    H --> I["🤖 Send Query + Context to LLM (System Prompted)"]
+    I --> J[📝 Generate Answer]
+    
+    style A fill:#888
+    style E fill:#888
+    style J fill:#888
+```
 
 This is helpful for many applications that require specific information, for example:
 - Virtual assistant for customers
